@@ -4,6 +4,7 @@
 Global rate: 0.7918367346938775
 * `apple` rate: 6/7
 * `bat` rate: 7/7
+* `beetle` rate: 5/7
 * `bell` rate: 7/7
 * `bird` rate: 7/7
 * `Bone` rate: 6/7
