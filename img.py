@@ -52,6 +52,20 @@ def normalize(img):
     center = get_center(pixels)
     return (change_basis(img, center, -angle), scales)
 
+def hausdorff(img1, img2):
+    h1, w1 = img1.shape[:2]
+    h2, w2 = img2.shape[:2]
+    h, w = min(h1, h2), min(w1, w2)
+
+    r1 = img1[(h1 - h) // 2 : (h1 + h) // 2, (w1 - w) // 2 : (w1 + w) // 2]
+    r2 = img2[(h2 - h) // 2 : (h2 + h) // 2, (w2 - w) // 2 : (w2 + w) // 2]
+
+    func = np.vectorize(lambda r, x: np.min(cv2.absdiff(int(x), r)))
+    func.excluded.add(0)
+    A = np.max(func(r1, r2))
+    B = np.max(func(r2, r1))
+    return max(A, B)
+
 def L2(img1, img2):
     h1, w1 = img1.shape[:2]
     h2, w2 = img2.shape[:2]
@@ -61,8 +75,8 @@ def L2(img1, img2):
     r2 = img2[(h2 - h) // 2 : (h2 + h) // 2, (w2 - w) // 2 : (w2 + w) // 2]
     return cv2.norm(r1, r2)
 
-def classify(unlab, lab, K = 1):
-    dist = [(L2(unlab, lab[0]), lab[1]) for lab in database]
+def classify(unlab, lab, dist, K = 1):
+    dist = [(dist(unlab, lab[0]), lab[1]) for lab in database]
     dist = sorted(dist, key = lambda z: z[0])
     dist = dist[ : K]
 
@@ -85,9 +99,9 @@ def classify(unlab, lab, K = 1):
 # exit(0)
 
 PATH = 'database/'
-LIMIT = 120
+LIMIT = 15
 files = [f for f in listdir(PATH) if isfile(join(PATH, f)) and '.pgm' in f]
-#files = files[ : LIMIT]
+files = files[ : LIMIT]
 
 database = []
 test = []
@@ -132,7 +146,7 @@ for t in test:
         db_count[t[2]][1] += 1
 
     img = cv2.resize(t[0][0], None, fx = scale_x / t[0][1][0], fy = scale_y / t[0][1][1])
-    label = classify(img, database)
+    label = classify(img, database, L2)
     print('{} : {}'.format(t[1], label))
 
     if label == t[2]:
