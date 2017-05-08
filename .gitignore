@@ -1,3 +1,4 @@
+db_dump.pkl
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
