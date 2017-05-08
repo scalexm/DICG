@@ -77,8 +77,8 @@ def L2(img1, img2):
     r2 = img2[(h2 - h) // 2 : (h2 + h) // 2, (w2 - w) // 2 : (w2 + w) // 2]
     return cv2.norm(r1, r2)
 
-def classify(unlab, lab, dist, K = 1):
-    dist = [(dist(unlab, lab[0]), lab[2]) for lab in database]
+def classify(unlab, sub_database, dist, K = 1):
+    dist = [(dist(unlab, lab[0]), lab[2]) for lab in sub_database]
     dist = sorted(dist, key = lambda z: z[0])
     dist = dist[ : K]
 
