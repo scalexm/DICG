@@ -81,9 +81,9 @@ def L2(img1, img2):
 
 # db: idem que le global database
 # i_query: indice de la requete dans db
-# test_set: sous ensemble des indices de db reservés au test
-def classify(db, i_query, test_set, dist_class, K = 1):
-    dist = [(dist_class.dist(i_query, i_test), db[i_test][2]) for i_test in test_set]
+# reference_set: sous ensemble des indices de db reservés au train
+def classify(db, i_query, reference_set, dist_class, K = 1):
+    dist = [(dist_class.dist(i_db,i_query), db[i_db][2]) for i_db in reference_set]
     dist = sorted(dist, key = lambda z: z[0])
     dist = dist[ : K]
 
@@ -158,47 +158,22 @@ for class_name in id_per_class:
     train_set += choice_in_class
     test_set += list(set(id_per_class[class_name])-set(choice_in_class))
 
-
-import matchShape
-print('Preprocess match sahpe')
-matchShape_dist = matchShape.matchShape(database,train_set)
-
-print('Classifying match shape...')
-count = 0
-db_count = { }
-
-for i_t in test_set:
-    t = database[i_t]
-    if t[2] not in db_count:
-        db_count[t[2]] = [0, 1]
-    else:
-        db_count[t[2]][1] += 1
-
-    #img = cv2.resize(t[0][0], None, fx = scale_x / t[0][1][0], fy = scale_y / t[0][1][1])
-    #img = t[0]
-    label = classify(database, i_t, train_set, matchShape_dist,3)
-    print('{} : {}'.format(t[1], label))
-
-    if label == t[2]:
-        count += 1
-        db_count[t[2]][0] += 1
-
-
-print('Global rate: {}'.format(count / len(test_set)))
-for k, v in db_count.items():
-    print('`{}` rate: {}/{}'.format(k, v[0], v[1]))
-
-
-
-'''
 #######################
-print('Preprocess freeman')
-freeman_dist = freeman.freeman(database,train_set)
+print('Preprocess freeman med')
+freeman_med_dist = freeman.freeman_median(database,train_set)
 
 print('Classifying freeman...')
 count = 0
 db_count = { }
 
+class_seen = {}
+elague_train_set = []
+for i in train_set:
+    the_class = database[i][2]
+    if not the_class in class_seen:
+        elague_train_set.append(i)
+        class_seen[the_class] = True
+
 for i_t in test_set:
     t = database[i_t]
     if t[2] not in db_count:
@@ -208,7 +183,7 @@ for i_t in test_set:
 
     #img = cv2.resize(t[0][0], None, fx = scale_x / t[0][1][0], fy = scale_y / t[0][1][1])
     #img = t[0]
-    label = classify(database, i_t, train_set, freeman_dist)
+    label = classify(database, i_t, elague_train_set, freeman_med_dist)
     print('{} : {}'.format(t[1], label))
 
     if label == t[2]:
@@ -221,7 +196,7 @@ for k, v in db_count.items():
     print('`{}` rate: {}/{}'.format(k, v[0], v[1]))
 
 
-
+'''
 #######################
 print('Classifying L2...')
 count = 0
