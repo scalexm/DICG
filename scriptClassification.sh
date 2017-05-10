@@ -11,7 +11,7 @@ NBIMGTESTS=40
 NBTESTS=5
 
 #No noise here
-MAXNOISE=0.7
+MAXNOISE=0.0
 sum=0.0
 variance=0.0
 cpt=0.0
@@ -32,9 +32,7 @@ for ((i=0; i < $NBIMGTESTS; i++)); do
             ##Random scale+rotation
             ANGLE=$((rand48()*3.1415))
             SCALE=$((rand48()*3))
-            NOISE=$MAXNOISE
-            echo $ANGLE
-            echo $SCALE
+            NOISE=$((rand48()*MAXNOISE))
 
             if [[ $SCALE -le $((0.1)) ]]; then
                 SCALE=$((1.0))
