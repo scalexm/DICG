@@ -17,9 +17,9 @@ Ainsi notre mesure de similarité n'à du sens que lorsque l'on compare deux ima
 
 ## Langage et dépendances
 Nous avons codé le projet en python3. Vous avez besoin des paquets:    
-- OpenCV pour python (cv2): sudo pip3 install opencv-python     
-- numpy: sudo pip3 install numpy       
-- Levenshtein (distance d'édition) : sudo pip3 install python-levenshtein     
+-  OpenCV pour python (cv2): sudo pip3 install opencv-python     
+-  numpy: sudo pip3 install numpy       
+-  Levenshtein (distance d'édition) : sudo pip3 install python-levenshtein     
 
 ## Architecture du projet
 - `img.py` : primitives de calcul des moments, d'extraction des composantes principales, de rotations etc...   
@@ -37,8 +37,9 @@ composantes principales (voir `tmp_crash.pgm`). Nous avons donc thresholdé ce f
 Voici des lignes de commandes types pour avoir les résultats de nos programmes:       
 - `python3 classify.py` : lance la mesure de cross validation pour notre technique, environs 5 exemples par classes sont retirés de la BDD et servent à mesurer le taux de succès en classif.    
 - `python3 main.py -classify <img>` : retourne le score de similarité d'<img> pour chaque classe dans l'ordre du fichier `classes.csv`    
-- `python3 main.py -similarity <img1> <img2>` : retourne le score de similarité entre <img1> et <img2>
+- `python3 main.py -similarity <img1> <img2>` : retourne le score de similarité entre <img1> et <img2>   
 
+**Pour fonctionner correctement les programmes ont besoin de la présence des deux fichiers de dump .pkl dans le même répertoire**.
 
 ## Nos Résultats
 
