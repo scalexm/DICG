@@ -38,29 +38,8 @@ database = []
 
 
 #########################
-if not os.path.isfile("db_dump.pkl"):
-    print('Reading files...')
-    for f in files:
-        tokens = f.split('-')
-        class_name = tokens[0]
-        nb = int(tokens[1].split('.')[0])
-
-        features = img.normalize(cv2.imread(PATH + f, 0))
-
-        print('Adding {} to database'.format(f))
-        database.append([features, f, class_name])
-
-    print('Rescaling database...')
-    scale_x = min(map(lambda lab : lab[0][1][0], database))
-    scale_y = min(map(lambda lab : lab[0][1][1], database))
-
-    for lab in database:
-        lab[0] = cv2.resize(lab[0][0], None, fx = scale_x / lab[0][1][0], fy = scale_y / lab[0][1][1], interpolation = cv2.INTER_AREA)
-
-    pickle.dump((database,scale_x,scale_y), open("db_dump.pkl", "wb"))
-else:
-    print("Loading dump...")
-    database,scale_x,scale_y = pickle.load(open("db_dump.pkl","rb"))
+print("Loading dump...")
+database,scale_x,scale_y = pickle.load(open("db_dump.pkl","rb"))
 
 
 #######################

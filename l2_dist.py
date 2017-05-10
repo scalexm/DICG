@@ -4,6 +4,7 @@ class L2_dist:
     def __init__(self,database):
         self.database = database
         return
+        
     def dist(self,i_query, i_train):
         img1,img2 = self.database[i_query][0],self.database[i_train][0]
         h1, w1 = img1.shape[:2]
