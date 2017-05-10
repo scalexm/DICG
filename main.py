@@ -64,6 +64,23 @@ for i,(_,_,n) in enumerate(database):
 database.append((unlab, sys.argv[2], ''))
 dist = freeman.Freeman(database)
 
+f_class = open("classes.csv","r")
+id_of_class_raw = f_class.read().split("\n")
+id_of_class = {}
+class_of_id = {}
+
+for (i,r) in enumerate(id_of_class_raw):
+    id_of_class[r.split(",")[0]] = i
+    class_of_id[i] = r.split(",")[0]
+
+max_d = 0
+to_output = []
 for class_name, indices in id_per_class.items():
     d = min([dist.dist(-1, i) for i in indices])
-    print('{}: {}'.format(class_name, d))
+    max_d = max(max_d,d)
+    to_output.append((id_of_class[class_name],d))
+
+to_output.sort(key=lambda x: x[0])
+
+for id_class,d in to_output: 
+    print('%.2f'%(1-d/max_d))
