@@ -11,8 +11,7 @@ def extract_pixels(img):
     )
 
     h, w = img.shape[:2]
-    pixels = [[x, y] for y in range(h) for x in range(w) if img[y, x] > 0]
-    return np.array(pixels).T
+    return np.dstack(np.nonzero(img.T))[0].T
 
 def get_pc(pixels):
     values, vectors = np.linalg.eig(np.cov(pixels))
