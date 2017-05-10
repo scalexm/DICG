@@ -39,7 +39,7 @@ Voici des lignes de commandes types pour avoir les résultats de nos programmes:
 - `python3 main.py -classify <img>` : retourne le score de similarité d'<img> pour chaque classe dans l'ordre du fichier `classes.csv`    
 - `python3 main.py -similarity <img1> <img2>` : retourne le score de similarité entre <img1> et <img2>   
 
-**Pour fonctionner correctement les programmes ont besoin de la présence des deux fichiers de dump .pkl dans le même répertoire**.
+**Pour fonctionner correctement les programmes ont besoin de la présence des deux fichiers de dump avec extension .pkl dans le même répertoire**.
 
 ## Nos Résultats
 
