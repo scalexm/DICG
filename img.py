@@ -82,8 +82,8 @@ def L2(img1, img2):
 # db: idem que le global database
 # i_query: indice de la requete dans db
 # test_set: sous ensemble des indices de db reservés au test
-def classify(db, i_query, test_set, dist_class, K = 1):
-    dist = [(dist_class.dist(i_query, i_test), db[i_test][2]) for i_test in test_set]
+def classify(db, i_query, reference_set, dist_class, K = 1):
+    dist = [(dist_class.dist(i_db,i_query), db[i_db][2]) for i_db in reference_set]
     dist = sorted(dist, key = lambda z: z[0])
     dist = dist[ : K]
 
@@ -142,7 +142,7 @@ else:
     database,scale_x,scale_y = pickle.load(open("db_dump.pkl","rb"))
 
 #######################
-train_per_class = 0.9
+train_per_class = 0.7
 print("Splitting the database ({}% in train)...".format(train_per_class*100))
 
 # list of id's in class 'name'
@@ -191,7 +191,7 @@ for k, v in db_count.items():
     print('`{}` rate: {}/{}'.format(k, v[0], v[1]))
 
 
-'''
+
 #######################
 print('Preprocess freeman')
 freeman_dist = freeman.freeman(database,train_set)
@@ -224,9 +224,27 @@ print('Global rate: {}'.format(count / len(test_set)))
 
 '''
 #######################
+
+class L2_dist:
+    def __init__(self,database):
+        self.database = database
+        return
+    def dist(self,i_query, i_train):
+        img1,img2 = self.database[i_query][0],self.database[i_train][0]
+        h1, w1 = img1.shape[:2]
+        h2, w2 = img2.shape[:2]
+        h, w = min(h1, h2), min(w1, w2)
+
+        r1 = img1[(h1 - h) // 2 : (h1 + h) // 2, (w1 - w) // 2 : (w1 + w) // 2]
+        r2 = img2[(h2 - h) // 2 : (h2 + h) // 2, (w2 - w) // 2 : (w2 + w) // 2]
+        return cv2.norm(r1, r2)
+
+
 print('Classifying L2...')
 count = 0
 db_count = { }
+
+L2_clf = L2_dist(database)
 
 for i_t in test_set:
     t = database[i_t]
@@ -237,7 +255,7 @@ for i_t in test_set:
 
     #img = cv2.resize(t[0][0], None, fx = scale_x / t[0][1][0], fy = scale_y / t[0][1][1])
     img = t[0]
-    label = classify(img, [database[j] for j in train_set], L2)
+    label = classify(database, i_t, train_set, L2_clf,1)
     print('{} : {}'.format(t[1], label))
 
     if label == t[2]:
@@ -245,7 +263,6 @@ for i_t in test_set:
         db_count[t[2]][0] += 1
 
 
-print('Global rate: {}'.format(count / len(test_set)))
 for k, v in db_count.items():
     print('`{}` rate: {}/{}'.format(k, v[0], v[1]))
-'''
+print('Global rate: {}'.format(count / len(test_set)))
