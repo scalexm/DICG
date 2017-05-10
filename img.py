@@ -128,11 +128,13 @@ if not os.path.isfile("db_dump.pkl"):
         database.append([features, f, class_name])
 
     print('Rescaling database...')
-    scale_x = max(map(lambda lab : lab[0][1][0], database))
-    scale_y = max(map(lambda lab : lab[0][1][1], database))
+    scale_x = min(map(lambda lab : lab[0][1][0], database))
+    scale_y = min(map(lambda lab : lab[0][1][1], database))
+
+
 
     for lab in database:
-        lab[0] = cv2.resize(lab[0][0], None, fx = scale_x / lab[0][1][0], fy = scale_y / lab[0][1][1])
+        lab[0] = cv2.resize(lab[0][0], None, fx = scale_x / lab[0][1][0], fy = scale_y / lab[0][1][1], interpolation = cv2.INTER_AREA)
 
     pickle.dump((database,scale_x,scale_y), open("db_dump.pkl", "wb"))
 else:
@@ -140,7 +142,7 @@ else:
     database,scale_x,scale_y = pickle.load(open("db_dump.pkl","rb"))
 
 #######################
-train_per_class = 0.7
+train_per_class = 0.9
 print("Splitting the database ({}% in train)...".format(train_per_class*100))
 
 # list of id's in class 'name'
@@ -158,7 +160,7 @@ for class_name in id_per_class:
     train_set += choice_in_class
     test_set += list(set(id_per_class[class_name])-set(choice_in_class))
 
-
+'''
 import matchShape
 print('Preprocess match sahpe')
 matchShape_dist = matchShape.matchShape(database,train_set)
@@ -189,7 +191,6 @@ for k, v in db_count.items():
     print('`{}` rate: {}/{}'.format(k, v[0], v[1]))
 
 
-
 '''
 #######################
 print('Preprocess freeman')
@@ -208,7 +209,7 @@ for i_t in test_set:
 
     #img = cv2.resize(t[0][0], None, fx = scale_x / t[0][1][0], fy = scale_y / t[0][1][1])
     #img = t[0]
-    label = classify(database, i_t, train_set, freeman_dist)
+    label = classify(database, i_t, train_set, freeman_dist,1)
     print('{} : {}'.format(t[1], label))
 
     if label == t[2]:
@@ -216,12 +217,12 @@ for i_t in test_set:
         db_count[t[2]][0] += 1
 
 
-print('Global rate: {}'.format(count / len(test_set)))
+
 for k, v in db_count.items():
     print('`{}` rate: {}/{}'.format(k, v[0], v[1]))
+print('Global rate: {}'.format(count / len(test_set)))
 
-
-
+'''
 #######################
 print('Classifying L2...')
 count = 0

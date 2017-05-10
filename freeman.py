@@ -42,6 +42,8 @@ class freeman:
             free_man += dirs[(delta[0],delta[1])]
         return free_man
 
+    def rotate(self,strg,n):
+        return strg[n:] + strg[:n]
 
     def dist(self,i1, i2):
         if not i1 in self.freeman_of:
@@ -54,8 +56,10 @@ class freeman:
         else:
             f2 = self.freeman_of[i2]
 
-        #print(i1,i2)
-        return leven.distance(f1,f2)
+        res = 1000*1000
+        for i in range(1,len(f2)):
+            res = min(res,leven.distance(f1,self.rotate(f2,i)))
+        return res
 
 
 class freeman_median:
